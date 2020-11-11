@@ -5,19 +5,21 @@ Created on Fri Dec 14 17:11:22 2018
 
 @author: avelinojaver
 """
+import random
+from pathlib import Path
+
+import cv2
+import numpy as np
+import torch
+from matplotlib import patches
+from torch.utils.data import Dataset
+
+from worm_poses.flow.encode_PAF import get_part_affinity_maps
 from worm_poses.flow.prepare_data import read_data_files, read_negative_data
 from worm_poses.flow.transforms import (AffineTransformBounded, Compose, RandomVerticalFlip,
                                         RandomHorizontalFlip, NormalizeIntensity, RandomIntensityExpansion,
                                         RandomIntensityOffset, AddBlankPatch, PadToSize, ToTensor,
                                         AddRandomLine, JpgCompression, RandomFlatField)
-from worm_poses.flow.encode_PAF import get_part_affinity_maps
-
-import numpy as np
-import random
-from pathlib import Path
-import cv2
-import torch
-from torch.utils.data import Dataset
 
 
 def collate_simple(batch):
@@ -493,22 +495,18 @@ class SkelMapsFlowValidation(SkelMapsFlow):
 if __name__ == '__main__':
     import tqdm
     import matplotlib.pylab as plt
-    from matplotlib import patches
 
-    # root_dir = Path.home() / 'workspace/WormData/worm-poses/rois4training/20190627_113423/'
-    # root_dir = '/Users/avelinojaver/OneDrive - Nexus365/worms/worm-poses/rois4training/'
-    # root_dir = '/Users/avelinojaver/OneDrive - Nexus365/worms/worm-poses/rois4training_filtered/'
-    root_dir = '/Users/maurice/Data/CMMC/scratch/worms_from_Andre/'
+    root_dir = ROOT_DIR
     # %%
     # argkws = dict(PAF_seg_dist = 1, n_segments = 15)
     argkws = dict(PAF_seg_dist=1, n_segments=15, fold_skeleton=True, is_contour_PAF=False, n_rois_lims=(1, 8),
                   mixup_probability=0.25)
 
     gen = SkelMapsFlow(root_dir=root_dir, return_key_value_pairs=False, **argkws)
-    # gen_val = SkelMapsFlowValidation(root_dir = root_dir, return_key_value_pairs = False, **argkws)
+    gen_val = SkelMapsFlowValidation(root_dir=root_dir, return_key_value_pairs=False, **argkws)
 
-    # gen_boxes = SkelMapsFlow(root_dir = root_dir, return_key_value_pairs = False, return_bboxes = True)
-    # gen_half_boxes = SkelMapsFlow(root_dir = root_dir, return_key_value_pairs = False, return_half_bboxes = True)
+    gen_boxes = SkelMapsFlow(root_dir=root_dir, return_key_value_pairs=False, return_bboxes=True)
+    gen_half_boxes = SkelMapsFlow(root_dir=root_dir, return_key_value_pairs=False, return_half_bboxes=True)
     # %%\
 
     img_m, target_m = gen._get_random_mixup()
@@ -600,66 +598,65 @@ if __name__ == '__main__':
 
         # %%
 
-    # for ind in tqdm.trange(1):
-    #     image, target = gen_boxes._build_rand_img()
-    #     image, target = gen_boxes._prepare_output(image, target)
-    #
-    #     img = image[0]
-    #     fig, ax = plt.subplots(1, 1, figsize = (10, 10))
-    #     ax.imshow(img, cmap = 'gray')
-    #
-    #     for bbox, ss, p in zip(target['boxes'], target['keypoints'], target['heads']):
-    #
-    #         xmin, ymin, xmax, ymax = bbox
-    #         ww = xmax - xmin + 1
-    #         hh = ymax - ymin + 1
-    #         rect = patches.Rectangle((xmin, ymin),ww,hh,linewidth=1,edgecolor='r',facecolor='none')
-    #         ax.add_patch(rect)
-    #
-    #         for s in ss:
-    #             plt.plot(s[:, 0], s[:, 1])
-    #
-    #         if p[0] >= 0:
-    #             plt.plot(p[0], p[1], 'or')
-    #
-    # #%%
-    # for ind in tqdm.trange(5):
-    #     image, target = gen_half_boxes._build_rand_img()
-    #     image, target = gen_half_boxes._prepare_output(image, target)
-    #
-    #     img = image[0]
-    #     fig, ax = plt.subplots(1,1)
-    #     ax.imshow(img, cmap = 'gray')
-    #
-    #
-    #     for bbox, ss in zip(target['boxes'], target['keypoints']):
-    #
-    #         xmin, ymin, xmax, ymax = bbox
-    #         ww = xmax - xmin + 1
-    #         hh = ymax - ymin + 1
-    #         rect = patches.Rectangle((xmin, ymin),ww,hh,linewidth=1,edgecolor='r',facecolor='none')
-    #         ax.add_patch(rect)
-    #
-    #         for s in ss:
-    #             plt.plot(s[:, 0], s[:, 1])
-    #
-    # #%%
-    #
-    #   #%%
-    # for ind in range(10, 20):
-    #     image, target =  gen_val._read_worm(ind)
-    #     image, target = gen_val._prepare_output(image, target)
-    #     img = image[0]
-    #
-    #     fig, axs = plt.subplots(1,2, sharex = True, sharey = True)
-    #
-    #     axs[0].imshow(img, cmap = 'gray')
-    #     axs[1].imshow(img, cmap = 'gray')
-    #     for skel in target['skels']:
-    #         axs[1].plot(skel[:, 0], skel[:, 1], '.-')
-    #
-    #     if target['heads'].shape[0] >= 0:
-    #         h = target['heads']
-    #         axs[1].plot(h[:, 0], h[:, 1], 'or')
+    for ind in tqdm.trange(1):
+        image, target = gen_boxes._build_rand_img()
+        image, target = gen_boxes._prepare_output(image, target)
+
+        img = image[0]
+        fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+        ax.imshow(img, cmap='gray')
+
+        for bbox, ss, p in zip(target['boxes'], target['keypoints'], target['heads']):
+
+            xmin, ymin, xmax, ymax = bbox
+            ww = xmax - xmin + 1
+            hh = ymax - ymin + 1
+            rect = patches.Rectangle((xmin, ymin), ww, hh, linewidth=1, edgecolor='r', facecolor='none')
+            ax.add_patch(rect)
+
+            for s in ss:
+                plt.plot(s[:, 0], s[:, 1])
+
+            if p[0] >= 0:
+                plt.plot(p[0], p[1], 'or')
+
+    # %%
+    for ind in tqdm.trange(5):
+        image, target = gen_half_boxes._build_rand_img()
+        image, target = gen_half_boxes._prepare_output(image, target)
+
+        img = image[0]
+        fig, ax = plt.subplots(1, 1)
+        ax.imshow(img, cmap='gray')
+
+        for bbox, ss in zip(target['boxes'], target['keypoints']):
+
+            xmin, ymin, xmax, ymax = bbox
+            ww = xmax - xmin + 1
+            hh = ymax - ymin + 1
+            rect = patches.Rectangle((xmin, ymin), ww, hh, linewidth=1, edgecolor='r', facecolor='none')
+            ax.add_patch(rect)
+
+            for s in ss:
+                plt.plot(s[:, 0], s[:, 1])
+
+    # %%
+
+    # %%
+    for ind in range(10, 20):
+        image, target = gen_val._read_worm(ind)
+        image, target = gen_val._prepare_output(image, target)
+        img = image[0]
+
+        fig, axs = plt.subplots(1, 2, sharex=True, sharey=True)
+
+        axs[0].imshow(img, cmap='gray')
+        axs[1].imshow(img, cmap='gray')
+        for skel in target['skels']:
+            axs[1].plot(skel[:, 0], skel[:, 1], '.-')
+
+        if target['heads'].shape[0] >= 0:
+            h = target['heads']
+            axs[1].plot(h[:, 0], h[:, 1], 'or')
 
     plt.show()
