@@ -496,7 +496,7 @@ if __name__ == '__main__':
     import tqdm
     import matplotlib.pylab as plt
 
-    root_dir = ROOT_DIR
+    root_dir = "/home/mdeserno/ag-bozek/maurice/data/worms_from_Andre/"
     # %%
     # argkws = dict(PAF_seg_dist = 1, n_segments = 15)
     argkws = dict(PAF_seg_dist=1, n_segments=15, fold_skeleton=True, is_contour_PAF=False, n_rois_lims=(1, 8),

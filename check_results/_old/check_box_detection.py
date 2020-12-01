@@ -30,7 +30,7 @@ if __name__ == '__main__':
     #bn = 'detection-singles_keypointrcnn_20190702_132349_adam_lr0.0001_wd0.0_batch8'
     bn = 'detection-singles_keypointrcnn_20190703_085950_adam_lr0.0001_wd0.0_batch8'
     set_type = bn.partition('_')[0]
-    model_path = Path.home() / 'workspace/WormData/worm-poses/results' / set_type  / bn / 'checkpoint.pth.tar'
+    model_path = Path.home() / 'workspace/WormData/worm-poses/results' / set_type  / bn / 'checkpoint.pth.tar' # TODO: Remove hardcoded path
     state = torch.load(model_path, map_location = 'cpu')
     #%%
     roi_size = 512
