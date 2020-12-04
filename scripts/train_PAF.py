@@ -28,9 +28,8 @@ mp.set_start_method('fork', force=True)
 import datetime
 import torch
 
-log_dir_root_dflt = Settings.config().get(section='PATHS', option='log_dir', fallback=defaults.LOG_DIR)
-
-data_root_dir = Settings.config().get(section='PATHS', option='data_dir', fallback=defaults.DATA_DIR)
+log_dir_root_dflt = Settings.config().get(section='PATHS', option='LOG_DIR', fallback=defaults.LOG_DIR)
+data_root_dir = Settings.config().get(section='PATHS', option='DATA_DIR', fallback=defaults.DATA_DIR)
 
 data_types = dict(
     v2=dict(
@@ -217,15 +216,15 @@ available_models = {
 
 
 def train_PAF():
-    data_type = Settings.config().get(section='HYPERPARAMETER', option='data_type', fallback=defaults.DATA_TYPE)
-    model_name = Settings.config().get(section='HYPERPARAMETER', option='model_name', fallback=defaults.MODEL_NAME)
     log_dir_root = log_dir_root_dflt
-    batch_size = Settings.config().get(section='HYPERPARAMETER', option='batch_size', fallback=defaults.BATCH_SIZE)
-    num_workers = Settings.config().get(section='HYPERPARAMETER', option='num_workers', fallback=defaults.NUM_WORKERS)
-    loss_type = Settings.config().get(section='HYPERPARAMETER', option='loss_type', fallback=defaults.LOSS_TYPE)
-    lr = Settings.config().get(section='HYPERPARAMETER', option='lr', fallback=defaults.LR)
-    n_epochs = Settings.config().get(section='HYPERPARAMETER', option='n_epochs', fallback=defaults.N_EPOCHS)
-    save_frequency = Settings.config().get(section='HYPERPARAMETER', option='save_frequency', fallback=defaults.LOG_DIR)
+    data_type = Settings.config().get(section='HYPERPARAMETER', option='DATA_TYPE', fallback=defaults.DATA_TYPE)
+    model_name = Settings.config().get(section='HYPERPARAMETER', option='MODEL_NAME', fallback=defaults.MODEL_NAME)
+    batch_size = Settings.config().get(section='HYPERPARAMETER', option='BATCH_SIZE', fallback=defaults.BATCH_SIZE)
+    num_workers = Settings.config().get(section='HYPERPARAMETER', option='NUM_WORKERS', fallback=defaults.NUM_WORKERS)
+    loss_type = Settings.config().get(section='HYPERPARAMETER', option='LOSS_TYPE', fallback=defaults.LOSS_TYPE)
+    lr = Settings.config().get(section='HYPERPARAMETER', option='LR', fallback=defaults.LR)
+    n_epochs = Settings.config().get(section='HYPERPARAMETER', option='N_EPOCHS', fallback=defaults.N_EPOCHS)
+    save_frequency = Settings.config().get(section='HYPERPARAMETER', option='SAVE_FREQUENCY', fallback=defaults.SAVE_FREQUENCY)
     # TODO: Set defaults in config
     cuda_id = 0
     weight_decay = 0.0

@@ -14,6 +14,8 @@ import torch
 from matplotlib import patches
 from torch.utils.data import Dataset
 
+from misc import defaults
+from misc.settings import Settings
 from worm_poses.flow.encode_PAF import get_part_affinity_maps
 from worm_poses.flow.prepare_data import read_data_files, read_negative_data
 from worm_poses.flow.transforms import (AffineTransformBounded, Compose, RandomVerticalFlip,
@@ -496,17 +498,18 @@ if __name__ == '__main__':
     import tqdm
     import matplotlib.pylab as plt
 
-    root_dir = "/home/mdeserno/ag-bozek/maurice/data/worms_from_Andre/"
+    data_root_dir = Settings.config().get(section='PATHS', option='DATA_DIR', fallback=defaults.DATA_DIR)
+
     # %%
     # argkws = dict(PAF_seg_dist = 1, n_segments = 15)
     argkws = dict(PAF_seg_dist=1, n_segments=15, fold_skeleton=True, is_contour_PAF=False, n_rois_lims=(1, 8),
                   mixup_probability=0.25)
 
-    gen = SkelMapsFlow(root_dir=root_dir, return_key_value_pairs=False, **argkws)
-    gen_val = SkelMapsFlowValidation(root_dir=root_dir, return_key_value_pairs=False, **argkws)
+    gen = SkelMapsFlow(root_dir=data_root_dir, return_key_value_pairs=False, **argkws)
+    gen_val = SkelMapsFlowValidation(root_dir=data_root_dir, return_key_value_pairs=False, **argkws)
 
-    gen_boxes = SkelMapsFlow(root_dir=root_dir, return_key_value_pairs=False, return_bboxes=True)
-    gen_half_boxes = SkelMapsFlow(root_dir=root_dir, return_key_value_pairs=False, return_half_bboxes=True)
+    gen_boxes = SkelMapsFlow(root_dir=data_root_dir, return_key_value_pairs=False, return_bboxes=True)
+    gen_half_boxes = SkelMapsFlow(root_dir=data_root_dir, return_key_value_pairs=False, return_half_bboxes=True)
     # %%\
 
     img_m, target_m = gen._get_random_mixup()
