@@ -183,7 +183,7 @@ if __name__ == '__main__':
     #bn = 'v2_openpose+light+fullsym_maxlikelihood_20191229_223132_adam_lr0.0001_wd0.0_batch22'
     #bn = 'v3_openpose+light+head_maxlikelihood_20200118_100732_adam_lr0.0001_wd0.0_batch24'
     
-    bn = 'v4PAFflat_openpose+light+head_maxlikelihood_20200206_105708_adam_lr0.0001_wd0.0_batch24'
+    bn = 'v5_openpose+light+head_maxlikelihood_20210113_155535_adam_lr0.0001_wd0.0_batch24'
     
     set_type = bn.partition('_')[0]
     model_path = Path.home() / 'workspace/WormData/worm-poses/results' / set_type  / bn / 'model_best.pth.tar'

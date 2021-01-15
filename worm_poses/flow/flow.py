@@ -494,7 +494,7 @@ class SkelMapsFlowValidation(SkelMapsFlow):
         return len(self.data_indexes)
 
 
-if __name__ == '__main__':
+def flow():
     import tqdm
     import matplotlib.pylab as plt
 

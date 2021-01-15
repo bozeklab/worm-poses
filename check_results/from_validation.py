@@ -5,9 +5,12 @@ Created on Thu Jun 27 17:05:51 2019
 
 @author: avelinojaver
 """
-
+import os
 import sys
-from pathlib import Path 
+from pathlib import Path
+
+from misc.settings import Settings
+
 _script_dir = Path(__file__).resolve().parents[1]
 sys.path.append(str(_script_dir))
 
@@ -68,7 +71,7 @@ def link_segments(preds,
         #%%
     return segments_linked
 
-if __name__ == '__main__':
+def from_validation():
     import matplotlib.pylab as plt
     import numpy as np
     
@@ -82,11 +85,11 @@ if __name__ == '__main__':
     #bn = 'v5_openpose+light+head_maxlikelihood_20200212_161540_adam_lr0.0001_wd0.0_batch24'
     
     #bn = 'v5mixup_R+openpose+light+head_maxlikelihood_20200213_180515_adam_lr0.0001_wd0.0_batch24'
-    bn = 'v5mixup_R+openpose+head_maxlikelihood_20200214_064610_adam_lr0.0001_wd0.0_batch14'
+    bn = Settings.config().get(section='PATHS', option='BN')
     #bn = 'v5mixup_openpose+light+head_maxlikelihood_20200213_180448_adam_lr0.0001_wd0.0_batch24'
     
     set_type = bn.partition('_')[0]
-    model_path = Path.home() / 'workspace/WormData/worm-poses/results' / set_type  / bn / 'model_best.pth.tar'
+    model_path = os.path.join(Settings.config().get(section='PATHS', option='RESULTS_DIR'), set_type, bn, "model_best.pth.tar")
     #model_path = Path.home() / 'OneDrive - Nexus365/worms/worm-poses/models/' / bn / 'model_best.pth.tar'
     #'checkpoint.pth.tar'
     
@@ -127,7 +130,8 @@ if __name__ == '__main__':
     model.load_state_dict(state['state_dict'])
     model.eval()
     #%%
-    src_file = '/Users/avelinojaver/OneDrive - Nexus365/worms/worm-poses/rois4training_filtered/manual_test.p.zip'
+    src_file = model_path = Settings.config().get(section='PATHS', option='TEST_FILE')
+
     #src_file = '/Users/avelinojaver/OneDrive - Nexus365/worms/worm-poses/rois4training_filtered/from_tierpsy_test.p.zip'
     #src_file = '/Users/avelinojaver/OneDrive - Nexus365/worms/worm-poses/rois4training_filtered/from_NNv1_test.p.zip'
     
@@ -139,7 +143,8 @@ if __name__ == '__main__':
     
     #dat = data_raw[-50:]
     
-    dat = [data_raw[ii] for ii in [722, 721, 719, 717, 49, 48, 44, 41, 21, 17, 10]]
+    #dat = [data_raw[ii] for ii in [722, 721, 719, 717, 49, 48, 44, 41, 21, 17, 10]]
+    dat = [data_raw[ii] for ii in range(165, 166)]
     for ii, out in enumerate(tqdm.tqdm(dat)): #enumerate():
         roi = out[1] if out[1] is not None else out[0]
         skels = out[3]
@@ -191,6 +196,7 @@ if __name__ == '__main__':
         axs[1][3].imshow(np.linalg.norm(paf[-1], axis = 0))
 
         plt.suptitle(bn)
+        plt.show()
 
         #%%
         # break
