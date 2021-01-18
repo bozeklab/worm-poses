@@ -5,9 +5,12 @@ Created on Wed Dec  4 12:07:03 2019
 
 @author: avelinojaver
 """
-
+import os
 import sys
-from pathlib import Path 
+from pathlib import Path
+
+from misc.settings import Settings
+
 __root_dir = Path(__file__).resolve().parent.parent
 sys.path.append(str(__root_dir))
 
@@ -183,10 +186,10 @@ if __name__ == '__main__':
     #bn = 'v2_openpose+light+fullsym_maxlikelihood_20191229_223132_adam_lr0.0001_wd0.0_batch22'
     #bn = 'v3_openpose+light+head_maxlikelihood_20200118_100732_adam_lr0.0001_wd0.0_batch24'
     
-    bn = 'v5_openpose+light+head_maxlikelihood_20210113_155535_adam_lr0.0001_wd0.0_batch24'
+    bn = Settings.config().get(section='PATHS', option='BN')
     
     set_type = bn.partition('_')[0]
-    model_path = Path.home() / 'workspace/WormData/worm-poses/results' / set_type  / bn / 'model_best.pth.tar'
+    model_path = os.path.join(Settings.config().get(section='PATHS', option='RESULTS_DIR'), set_type, bn, "model_best.pth.tar")
     
     #save_dir_root = Path.home() / 'workspace/WormData/worm-poses/processed'
     #save_dir = save_dir_root / bn

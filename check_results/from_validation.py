@@ -130,7 +130,7 @@ def from_validation():
     model.load_state_dict(state['state_dict'])
     model.eval()
     #%%
-    src_file = model_path = Settings.config().get(section='PATHS', option='TEST_FILE')
+    src_file = Settings.config().get(section='PATHS', option='TEST_FILE')
 
     #src_file = '/Users/avelinojaver/OneDrive - Nexus365/worms/worm-poses/rois4training_filtered/from_tierpsy_test.p.zip'
     #src_file = '/Users/avelinojaver/OneDrive - Nexus365/worms/worm-poses/rois4training_filtered/from_NNv1_test.p.zip'
